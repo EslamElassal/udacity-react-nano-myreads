@@ -107,9 +107,9 @@ class Search extends Component {
                 </li>
               ))}
             </ol>
-            ) : (
-              <ol className="books-grid"></ol>
-            )}
+          ) : (
+            <ol className="books-grid"></ol>
+          )}
         </div>
       </div>
     );
