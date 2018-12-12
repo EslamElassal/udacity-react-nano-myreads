@@ -1,6 +1,8 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
+import { Link } from 'react-router-dom'
 import * as BooksAPI from './BooksAPI'
+import Book from './Book'
 
 class Search extends Component {
   state = {
@@ -11,100 +13,66 @@ class Search extends Component {
 
   handleSearch = query => {
     this.setState(() => ({
-      userSearch: query.trim(),
-    }))
-  }
+      userSearch: query,
+    }));
+  };
 
-   componentDidUpdate = () => {
+  componentDidUpdate = () => {
     const { userSearch, prevSearch } = this.state;
+    const { myBooks } = this.props;
 
     if (userSearch !== prevSearch){
-      if(userSearch !== ''){
+      if(userSearch !== ''){ // If search bar is not empty
         BooksAPI.search(userSearch)
           .then(books => {
-              if(books !== undefined && books.length > 0){
+              if(books !== undefined && books.length > 0){ // If search term is recognized
+                const searchBooks = books.map(book => {
+                  const myBook = myBooks.filter(myBook => myBook.id === book.id);
+                  return myBook.length > 0 ? myBook[0] : book;
+                });
                 this.setState(() => ({
                   prevSearch: userSearch,
-                  curBooks: books,
+                  curBooks: searchBooks,
                 }));
-              } else {
+              } else { // Else search term is not recognized
                 this.setState(() => ({
                   prevSearch: userSearch,
                   curBooks: [],
                 }));
-              }
+              };
           });
-      } else {
+      } else { // Else search bar is empty
         this.setState(() => ({
           prevSearch: userSearch,
           curBooks: [],
         }));
-      }
-    }
+      };
+    };
    };
 
   render() {
     const { handleSearch } = this;
     const { userSearch, curBooks } = this.state;
+    const { updateBook, handleSelect } = this.props;
 
     return (
       <div className="search-books">
         <div className="search-books-bar">
-          <Link to='/' className='close-search'>Close</Link>              
+          <Link to='/' className='close-search'>Close</Link>
           <div className="search-books-input-wrapper">
-            {/* START HERE?
-              NOTES: The search from BooksAPI is limited to a particular set of search terms.
-              You can find these search terms here:
-              https://github.com/udacity/reactnd-project-myreads-starter/blob/master/SEARCH_TERMS.md
-
-              However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
-              you don't find a specific author or title. Every search is limited by search terms.
-            */}
             <input
               type="text"
               placeholder="Search by title or author"
               value={userSearch}
               onChange={(event) => handleSearch(event.target.value)}
-            />               
+            />
           </div>
         </div>
         <div className="search-books-results">
           {curBooks !== [] ? (
             <ol className="books-grid">
               {curBooks.map(book => (
-                // if imageLinks is array, then thumbnail
-                // else get the individual image?
-                // console.log each book in 'journey' search to discover properties
-                <li key={book.id}>
-                  <div className="book">
-                    <div className="book-top">
-                    {book.imageLinks !== undefined ? (
-                      <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url("${book.imageLinks.thumbnail}")` }}></div>
-                    ) : (
-                      <div className="book-cover" style={{ width: 128, height: 193 }}></div>
-                    )}
-                      <div className="book-shelf-changer">
-                        <select>
-                          <option value="move" disabled>Move to...</option>
-                          <option value="currentlyReading">Currently Reading</option>
-                          <option value="wantToRead">Want to Read</option>
-                          <option value="read">Read</option>
-                          <option value="none">None</option>
-                        </select>
-                      </div>
-                    </div>
-                  {book.title !== undefined ? (
-                    <div className="book-title">{book.title}</div>
-                  ) : (
-                    <div className="book-title">Untitled</div>
-                  )}
-                  {book.authors !== undefined ? (
-                    <div className="book-authors">{book.authors[0]}</div>
-                  ) : (
-                    <div className="book-authors">Unknown</div>  
-                  )}
-                  </div>
-                </li>
+                <Book key={book.id} book={book} updateBook={updateBook} handleSelect={handleSelect} />
               ))}
             </ol>
           ) : (
@@ -117,3 +85,9 @@ class Search extends Component {
 };
 
 export default Search;
+
+Search.propTypes = {
+  myBooks: PropTypes.array.isRequired,
+  updateBook: PropTypes.func.isRequired,
+  handleSelect: PropTypes.func.isRequired,
+};
