@@ -1,6 +1,6 @@
 # MyReads Project
 
-The MyReads Book Tracking Project is my first of three Udacity React Developer Nanodegree projects. The project features two pages; a main page (library) and a search page. The library contains three bookshelves -Currently Reading, Want to Read, and Read- which display your books. The search page allows you to find and add new books to your library. Books can be moved to a different shelf from either page. Click the cover of a book to open a preview of that book. Enjoy filling your new personal library!
+The MyReads Book Tracking Project is my first of three Udacity React Developer Nanodegree projects. The project features two pages; a main page (library) and a search page. The library contains three bookshelves -Currently Reading, Want to Read, and Read- which display your books. The search page allows you to find and add new books to your library. Books can be moved to a different shelf from either page. Click the cover of a book to open a preview of that book. Enjoy filling your personal library!
 
 ## TL;DR
 
